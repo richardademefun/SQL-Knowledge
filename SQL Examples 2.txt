@@ -1,0 +1,126 @@
+Assessment test 2
+
+How can you retrieve all the information from the cd.facilities table?
+
+ANS:
+SELECT * FROM cd.facilities
+
+You want to print out a list of all of the facilities and their cost to members. 
+How would you retrieve a list of only facility names and costs?
+
+ANS:
+SELECT name, ROUND(AVG(membercost),2) AS member_cost
+FROM cd.facilities
+GROUP BY name
+ORDER BY member_cost
+
+How can you produce a list of facilities that charge a fee to members?
+
+ANS:
+SELECT name, ROUND(AVG(membercost),2) AS member_cost
+FROM cd.facilities
+GROUP BY name
+HAVING AVG(membercost) > 0
+ORDER BY member_cost
+
+How can you produce a list of facilities that charge a fee to members, 
+and that fee is less than 1/50th of the monthly maintenance cost? 
+Return the facid, facility name, member cost, 
+and monthly maintenance of the facilities in question.
+
+ANS:
+SELECT facilities.facid,
+name AS facility_name, 
+ROUND(AVG(membercost),2) AS member_cost, 
+monthlymaintenance AS monthlymaintenance_cost
+FROM cd.facilities
+GROUP BY facilities.facid
+HAVING AVG(membercost) > 1/AVG(monthlymaintenance)
+ORDER BY member_cost
+
+How can you produce a list of all facilities with the word 'Tennis' in their name?
+
+ANS:
+SELECT name AS facilities
+FROM cd.facilities
+WHERE name LIKE '%Tennis%'
+
+How can you retrieve the details of facilities with ID 1 and 5?
+Try to do it without using the OR operator.
+
+ANS:
+SELECT * 
+FROM cd.facilities
+WHERE facid IN(1,5)
+
+How can you produce a list of members who joined after the start of September 2012? 
+Return the memid, surname, firstname, and joindate of the members in question.
+
+ANS:
+SELECT memid,
+surname,
+firstname,
+joindate
+FROM cd.members
+WHERE joindate > '2012-09-01 00:00:00'
+
+How can you produce an ordered list of the first 10 surnames in the members table? 
+The list must not contain duplicates.
+
+ANS:
+SELECT surname 
+FROM cd.members
+GROUP BY surname
+LIMIT 10
+
+You'd like to get the signup date of your last member. 
+How can you retrieve this information?
+
+ANS:
+SELECT joindate
+FROM cd.members
+ORDER BY joindate DESC
+LIMIT 1
+
+Produce a count of the number of facilities that have a cost to guests of 10 or more.
+
+ANS:
+SELECT COUNT(*) 
+FROM cd.facilities 
+WHERE guestcost >= 10;
+
+Produce a list of the total number of slots booked per facility in the 
+month of September 2012. Produce an output table consisting of facility 
+id and slots, sorted by the number of slots.
+
+ANS:
+SELECT facid, SUM(slots) AS number_of_slots
+FROM cd.bookings
+WHERE starttime BETWEEN '2012-09-01 00:00:00' AND '2012-09-30 23:59:59'
+GROUP BY facid
+ORDER BY SUM(slots)
+
+How can you produce a list of the start times for bookings 
+for tennis courts, for the date '2012-09-21'? Return a list of 
+start time and facility name pairings, ordered by the time.
+
+ANS:
+SELECT starttime, name
+FROM cd.bookings
+JOIN cd.facilities ON cd.bookings.facid = cd.facilities.facid
+WHERE starttime BETWEEN '2012-09-21 00:00:00' AND '2012-09-21 23:59:59'
+AND name LIKE '%Tennis Court%'
+ORDER BY starttime
+
+How can you produce a list of the start times for 
+bookings by members named 'David Farrell'?
+
+ANS:
+
+SELECT firstname , surname , starttime
+FROM cd.members
+INNER JOIN cd.bookings ON members.memid = bookings.memid
+WHERE firstname LIKE 'David' 
+AND surname LIKE 'Farrell'
+ORDER BY starttime
+
